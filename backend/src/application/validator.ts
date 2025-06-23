@@ -1,12 +1,22 @@
-const NAME_REGEX = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ ]+$/;
+// Permitir letras, espacios, tildes, diéresis, ñ, Ñ y apóstrofes
+const NAME_REGEX = /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ' .-]+$/;
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^(6|7|9)\d{8}$/;
 const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
 
 //Length validations according to the database schema
 
+const isValidName = (name: string) => {
+  // Permite letras Unicode, espacios y apóstrofes
+  return /^[\p{L} ']+$/u.test(name.normalize('NFC'));
+};
+
 const validateName = (name: string) => {
-    if (!name || name.length < 2 || name.length > 100 || !NAME_REGEX.test(name)) {
+    if (!name || typeof name !== 'string') {
+        throw new Error('Invalid name');
+    }
+    const trimmed = name.trim();
+    if (trimmed.length < 2 || trimmed.length > 100 || !NAME_REGEX.test(trimmed)) {
         throw new Error('Invalid name');
     }
 };
@@ -23,8 +33,32 @@ const validatePhone = (phone: string) => {
     }
 };
 
-const validateDate = (date: string) => {
-    if (!date || !DATE_REGEX.test(date)) {
+const isRealDate = (dateString: string) => {
+    if (!DATE_REGEX.test(dateString)) return false;
+    const [year, month, day] = dateString.split('-').map(Number);
+    
+    // Validar rangos básicos
+    if (year < 1900 || year > 2100) return false;
+    if (month < 1 || month > 12) return false;
+    if (day < 1 || day > 31) return false;
+    
+    // Crear fecha usando UTC para evitar problemas de zona horaria
+    const date = new Date(Date.UTC(year, month - 1, day));
+    
+    // Verificar que la fecha es válida y corresponde a los valores originales
+    return date.getUTCFullYear() === year && 
+           date.getUTCMonth() === month - 1 && 
+           date.getUTCDate() === day;
+};
+
+const validateDate = (date?: string | null, required: boolean = true) => {
+    if (!date) {
+        if (required) {
+            throw new Error('Invalid date');
+        }
+        return; // Si no es requerido y está vacío, no validar
+    }
+    if (!DATE_REGEX.test(date) || !isRealDate(date)) {
         throw new Error('Invalid date');
     }
 };
@@ -40,13 +74,15 @@ const validateEducation = (education: any) => {
         throw new Error('Invalid institution');
     }
 
-    if (!education.title || education.title.length > 100) {
+    // Título: hasta 250 caracteres según el modelo
+    if (!education.title || education.title.length > 250) {
         throw new Error('Invalid title');
     }
 
-    validateDate(education.startDate);
-
-    if (education.endDate && !DATE_REGEX.test(education.endDate)) {
+    validateDate(education.startDate, true); // startDate es requerido
+    
+    // Validar endDate con mensaje específico (opcional)
+    if (education.endDate && (!DATE_REGEX.test(education.endDate) || !isRealDate(education.endDate))) {
         throw new Error('Invalid end date');
     }
 };
@@ -64,9 +100,10 @@ const validateExperience = (experience: any) => {
         throw new Error('Invalid description');
     }
 
-    validateDate(experience.startDate);
-
-    if (experience.endDate && !DATE_REGEX.test(experience.endDate)) {
+    validateDate(experience.startDate, true); // startDate es requerido
+    
+    // Validar endDate con mensaje específico (opcional)
+    if (experience.endDate && (!DATE_REGEX.test(experience.endDate) || !isRealDate(experience.endDate))) {
         throw new Error('Invalid end date');
     }
 };
