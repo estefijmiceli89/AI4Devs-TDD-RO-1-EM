@@ -16,7 +16,9 @@ Durante la ejecución de tests de casos límite para datos maliciosos, se identi
 | **VULN-006** | Falta Middleware de Errores | Crítica | 11 tests | ❌ NO PROTEGIDO |
 | **VULN-007** | Limitaciones de Unicode | Media | 7 tests | ❌ NO PROTEGIDO |
 
-**Total**: 7 vulnerabilidades únicas → 35 tests skipeados
+**Total**: 7 vulnerabilidades únicas → 46 tests skipeados
+
+> Nota: Cada test skipeado corresponde a un caso único de vulnerabilidad. Se eliminaron duplicados entre tests unitarios e integración para mantener una relación 1:1 entre tests skipeados y vulnerabilidades demostradas.
 
 ## Vulnerabilidades Detalladas
 

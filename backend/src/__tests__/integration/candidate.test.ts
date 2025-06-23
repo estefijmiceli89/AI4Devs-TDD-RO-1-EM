@@ -590,12 +590,6 @@ describe('Candidate Integration Tests', () => {
   });
 
   describe('Vulnerabilidades de Seguridad', () => {
-    it.skip('debería rechazar descripciones con scripts en experiencia laboral (VULN-001)', async () => {/* ... */});
-    it.skip('debería rechazar filePath con path traversal en CV (VULN-002)', async () => {/* ... */});
-    it.skip('debería rechazar filePath con path traversal absoluto (VULN-002)', async () => {/* ... */});
-    it.skip('debería rechazar filePath con caracteres de control (VULN-002)', async () => {/* ... */});
-    it.skip('debería rechazar instituciones con SQL injection (VULN-003)', async () => {/* ... */});
-    it.skip('debería rechazar emails extremadamente largos (VULN-004)', async () => {/* ... */});
     it.skip('debería rechazar requests con headers maliciosos (VULN-005)', async () => {/* ... */});
     it.skip('debería rechazar requests con Content-Type incorrecto (VULN-005)', async () => {/* ... */});
     it.skip('debería rechazar requests con encoding malicioso (VULN-005)', async () => {/* ... */});
